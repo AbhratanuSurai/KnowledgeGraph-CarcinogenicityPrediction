@@ -23,34 +23,21 @@ import sun.jvm.hotspot.debugger.linux.sparc.LinuxSPARCThreadContext;
  * @author Abhratanu Surai
  *
  */
+
 public class TurtleParser {
     public static void main(String[] args) {
 
         /*
-        * Creating a model and load the turtle file in the model
-        * */
+         * Creating a model and load the turtle file in the model
+         * */
         Model model = RDFDataMgr.loadModel("./src/main/resources/kg-mini-project-train_v2.ttl");
-        System.out.println(model.getNsPrefixMap());
-        //System.out.println(model.toString());
-        //System.out.println(model.listStatements());
 
-        /*Iterator<Statement> stmt = model.listStatements();
-        while(stmt.hasNext()){
-            statements.add(stmt.next());
-        }
-        System.out.println(statements);*/
-
-        //List<Resource> subjects = model.listSubjects().toList();
-        //List<RDFNode> objects = model.listObjects().toList();
-        //Property properties = model.getProperty(subjects.get(0).toString());
-
-        //System.out.println(subjects);
 
         Statement stmt;
         Set<Resource> subjects = new HashSet<>();
         Set<Property>  predicates = new HashSet<>();
         ArrayList<String>   eachLearningProblemLabels = new ArrayList<>();
-        List<ArrayList<String>> AllLearningProblemLabels = new ArrayList<ArrayList<String>>();
+        List<ArrayList<String>> allLearningProblemLabels = new ArrayList<ArrayList<String>>();
         StmtIterator iter = model.listStatements();
 
 
@@ -62,13 +49,19 @@ public class TurtleParser {
             stmt = iter.nextStatement();
             subjects.add(stmt.getSubject());
             predicates.add(stmt.getPredicate());
-            //object.add(stmt.getObject());
         }
         //System.out.print(subjects.);
         //System.out.println(predicates);
 
+        /* eachLearningProblemLabels is a list of strings
+        *  that contains 3 string items;
+        *  1) Name of the learning problem
+        *  2) Label of the bond (i.e., excludes or include resource)
+        *  3) The carcinogenesis bond itself.
+        *
+        *  allLearningProblemLabels is a list of lists of above type.
+        * */
         for(Resource r : subjects){
-
             for(Property p : predicates){
                 if(!p.toString().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")){
                     eachLearningProblemLabels.add(r.toString());
@@ -77,11 +70,11 @@ public class TurtleParser {
                     if(object.hasNext())
                         eachLearningProblemLabels.add(object.next().toString());
                 }
-                AllLearningProblemLabels.add(eachLearningProblemLabels);
+                allLearningProblemLabels.add(eachLearningProblemLabels);
             }
         }
 
-        for(ArrayList<String> eachList : AllLearningProblemLabels){
+        for(ArrayList<String> eachList : allLearningProblemLabels){
             for(String s : eachList){
                 System.out.println(s);
             }
