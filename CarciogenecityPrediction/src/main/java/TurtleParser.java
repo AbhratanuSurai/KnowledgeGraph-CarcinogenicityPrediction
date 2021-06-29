@@ -36,8 +36,10 @@ public class TurtleParser {
         Statement stmt;
         Set<Resource> subjects = new HashSet<>();
         Set<Property>  predicates = new HashSet<>();
-        ArrayList<String>   eachLearningProblemLabels = new ArrayList<>();
-        List<ArrayList<String>> allLearningProblemLabels = new ArrayList<ArrayList<String>>();
+        ArrayList<String>   eachLearningProblemPositiveLabels = new ArrayList<>();
+        ArrayList<String>   eachLearningProblemNegativeLabels = new ArrayList<>();
+        List<ArrayList<String>> allLearningProblemPositiveLabels = new ArrayList<ArrayList<String>>();
+        List<ArrayList<String>> allLearningProblemNegativeLabels = new ArrayList<ArrayList<String>>();
         StmtIterator iter = model.listStatements();
 
 
@@ -50,36 +52,50 @@ public class TurtleParser {
             subjects.add(stmt.getSubject());
             predicates.add(stmt.getPredicate());
         }
-        //System.out.print(subjects.);
+        //System.out.print(subjects);
         //System.out.println(predicates);
 
-        /* eachLearningProblemLabels is a list of strings
-        *  that contains 3 string items;
+        /* eachLearningProblemPositiveLabels is a list of positive examples
+        *  that contains 2 string items;
         *  1) Name of the learning problem
-        *  2) Label of the bond (i.e., excludes or include resource)
-        *  3) The carcinogenesis bond itself.
+        *  2) The carcinogenesis bond itself.
         *
-        *  allLearningProblemLabels is a list of lists of above type.
+        *  allLearningProblemPositiveLabels is a list of lists of above type.
+        *
+        *  Similar lists also exists for negative examples as well
+        *  namely eachLearningProblemNegativeLabels and allLearningProblemPositiveLabels.
         * */
         for(Resource r : subjects){
             for(Property p : predicates){
                 if(!p.toString().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")){
-                    eachLearningProblemLabels.add(r.toString());
-                    eachLearningProblemLabels.add(p.toString());
                     NodeIterator object = model.listObjectsOfProperty(r, p);
-                    if(object.hasNext())
-                        eachLearningProblemLabels.add(object.next().toString());
+                    if(object.hasNext() && p.toString().equals("https://lpbenchgen.org/property/includesResource")) {
+                        eachLearningProblemPositiveLabels.add(r.toString());
+                        eachLearningProblemPositiveLabels.add(object.next().toString());
+                        allLearningProblemPositiveLabels.add(eachLearningProblemPositiveLabels);
+                    }
+                    else if (object.hasNext() && p.toString().equals("https://lpbenchgen.org/property/excludesResource")){
+                        eachLearningProblemNegativeLabels.add(r.toString());
+                        eachLearningProblemNegativeLabels.add(object.next().toString());
+                        allLearningProblemNegativeLabels.add(eachLearningProblemNegativeLabels);
+                    }
                 }
-                allLearningProblemLabels.add(eachLearningProblemLabels);
             }
         }
 
-        for(ArrayList<String> eachList : allLearningProblemLabels){
+
+        System.out.println("\n ---List of all positive examples--- \n");
+        for(ArrayList<String> eachList : allLearningProblemPositiveLabels){
             for(String s : eachList){
                 System.out.println(s);
             }
         }
-
+        System.out.println("\n ---List of all Negative examples--- \n");
+        for(ArrayList<String> eachList : allLearningProblemNegativeLabels){
+            for(String s : eachList){
+                System.out.println(s);
+            }
+        }
 
     }
 
