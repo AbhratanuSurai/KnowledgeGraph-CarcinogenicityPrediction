@@ -1,5 +1,7 @@
 import rdflib
 from rdflib import Graph
+from ontolearn import KnowledgeBase, SampleConceptLearner
+from ontolearn.metrics import F1, PredictiveAccuracy, CELOEHeuristic, DLFOILHeuristic
 
 subjects = set()
 predicates = set()
@@ -42,9 +44,41 @@ for s in list(subjects):
                 eachNegativeLabels = [s, o]
                 allNegativeLabels.append(eachNegativeLabels)
 
-print("===== All positive examples ===== \n")
-print(allPositiveLabels)
-print("\n===== All Negative examples ===== \n")
-print(allNegativeLabels)
+# print("===== All positive examples ===== \n")
+# print(allPositiveLabels)
+# print("\n===== All Negative examples ===== \n")
+# print(allNegativeLabels)
+
+# storing all carcinigenesis bond of lp_4 with positive and negative labels
+posForOneLP = set()
+for eachLabel in allPositiveLabels:
+    if str(eachLabel[0]) == "https://lpbenchgen.org/resource/lp_4":
+        posForOneLP.add(str(eachLabel[1]))
+
+negForOneLP = set()
+for eachLabel in allNegativeLabels:
+    if str(eachLabel[0]) == "https://lpbenchgen.org/resource/lp_4":
+        negForOneLP.add(str(eachLabel[1]))
+
+# print(posForOneLP)
+# print("\n ================ NEGATIVE EXAMPLES FOR LP_4 ===================\n")
+# print(negForOneLP)
 
 
+
+
+
+kb = KnowledgeBase(path='carcinogenesis.owl')
+
+p = posForOneLP
+n = negForOneLP
+
+model = SampleConceptLearner(knowledge_base=kb,
+                             quality_func=F1(),
+                             terminate_on_goal=True,
+                             heuristic_func=DLFOILHeuristic(),
+                             iter_bound=100,
+                             verbose=False)
+
+model.predict(p, n)
+model.show_best_predictions(top_n=10)
