@@ -1,12 +1,10 @@
 from rdflib import Graph
 
 class TurtleParser():
-    subjects = set()
-    predicates = set()
 
     def __init__(self):
         self.graph = Graph()
-        self.subjetcs = set()
+        self.subjects = set()
         self.predicates = set()
 
     def parse_rdf(self):
@@ -29,8 +27,6 @@ class TurtleParser():
     def get_subjects(self):
         return self.subjects
 
-
-
     def get_labels(self, learning_problem, pos):
         pos_for_one_lp = set()
         neg_for_one_lp = set()
@@ -46,4 +42,4 @@ class TurtleParser():
                 if str(p) == "https://lpbenchgen.org/property/excludesResource":
                     for o in self.graph.objects(learning_problem, p):
                         neg_for_one_lp.add(str(o))
-                return neg_for_one_lp
+            return neg_for_one_lp

@@ -1,14 +1,24 @@
-from rdflib import Graph
-from TurtleParser import TurtleParser
+from ontolearn import KnowledgeBase
+
 from sklearn.model_selection import train_test_split
+
+from Learner import Learner
+from TurtleParser import TurtleParser
+
 
 if __name__ == "__main__":
     test = TurtleParser()
     test.parse_rdf()
-    bla = test.get_subjects().pop()
-    print(bla)
-    data_pos = test.get_labels(bla, 1)
-    d = list(data_pos)
-    train, val = train_test_split(d, test_size=0.3)
-    print (train)
-    print (val)
+    bla = test.get_subjects()
+    sol = []
+    for i in bla:
+        data_pos = test.get_labels(i, 1)
+        data_neg = test.get_labels(i, 0)
+        pos_train, pos_val = train_test_split(list(data_pos), test_size=0.2)
+        neg_train, neg_val = train_test_split(list(data_neg), test_size=0.2)
+        u = pos_val + neg_val
+        l = Learner()
+        kb = KnowledgeBase(path='carcinogenesis.owl')
+        sol = l.get_predictions(set(pos_train), set(neg_train), u, kb)
+        thistuple = (pos_train, pos_val, neg_train, neg_val, sol)
+        sol.add(thistuple)
