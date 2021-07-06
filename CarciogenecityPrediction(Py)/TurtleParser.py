@@ -31,17 +31,22 @@ class TurtleParser():
     with positive and negative labels in separate variables
     """
 
-    def get_labels(self, learning_problem):
+    def get_labels(self, learning_problem, pos):
         pos_for_one_lp.clear(), neg_for_one_lp.clear()
 
-        for p in list(predicates):
-            if str(p) == "https://lpbenchgen.org/property/includesResource":
-                for o in graph.objects(learning_problem, p):
-                    pos_for_one_lp.add(str(o))
+        if(pos == true):
+            for p in list(predicates):
+                if str(p) == "https://lpbenchgen.org/property/includesResource":
+                    for o in graph.objects(learning_problem, p):
+                        pos_for_one_lp.add(str(o))
+            return pos_for_one_lp
+        else:
+            for p in list(predicates):
+                if str(p) == "https://lpbenchgen.org/property/excludesResource":
+                    for o in graph.objects(learning_problem, p):
+                        neg_for_one_lp.add(str(o))
+                return neg_for_one_lp
 
-            elif str(p) == "https://lpbenchgen.org/property/excludesResource":
-                for o in graph.objects(learning_problem, p):
-                    neg_for_one_lp.add(str(o))
 
 
 parser = TurtleParser()
