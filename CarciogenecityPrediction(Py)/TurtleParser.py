@@ -1,10 +1,8 @@
-import rdflib
 from rdflib import Graph
-# from ontolearn import KnowledgeBase, SampleConceptLearner
-# from ontolearn.metrics import F1, PredictiveAccuracy, CELOEHeuristic, DLFOILHeuristic
-# from Ontolearn.ontolearn.concept_learner import CELOE
 
 class TurtleParser():
+    subjects = set()
+    predicates = set()
 
     def __init__(self):
         self.graph = Graph()
@@ -28,12 +26,16 @@ class TurtleParser():
     storing all carcinigenesis bond of given learning problems 
     with positive and negative labels in separate variables
     """
+    def get_subjects(self):
+        return self.subjects
+
+
 
     def get_labels(self, learning_problem, pos):
         pos_for_one_lp = set()
         neg_for_one_lp = set()
 
-        if(pos == true):
+        if(pos == 1):
             for p in list(self.predicates):
                 if str(p) == "https://lpbenchgen.org/property/includesResource":
                     for o in self.graph.objects(learning_problem, p):
