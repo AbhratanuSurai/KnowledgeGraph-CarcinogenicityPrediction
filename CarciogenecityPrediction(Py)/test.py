@@ -10,7 +10,8 @@ if __name__ == "__main__":
     test = TurtleParser()
     test.parse_rdf()
     bla = test.get_subjects()
-    sol = []
+    sol = {}
+    data = {}
     for i in bla:
         data_pos = test.get_labels(i, 1)
         data_neg = test.get_labels(i, 0)
@@ -20,5 +21,8 @@ if __name__ == "__main__":
         l = Learner()
         kb = KnowledgeBase(path='carcinogenesis.owl')
         sol = l.get_predictions(set(pos_train), set(neg_train), u, kb)
-        thistuple = (pos_train, pos_val, neg_train, neg_val, sol)
-        sol.add(thistuple)
+        pos_data = (pos_train, pos_val)
+        neg_data = (neg_train, neg_val)
+        lp_data = (pos_data,neg_data)
+        data[i] = lp_data
+        sol.add(sol)
