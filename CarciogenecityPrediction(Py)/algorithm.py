@@ -1,4 +1,5 @@
 import math
+import random
 from rdflib import Graph
 from Ontolearn.ontolearn import KnowledgeBase
 from Ontolearn.ontolearn.concept_learner import CELOE
@@ -67,17 +68,27 @@ model =CELOE(knowledge_base=kb, max_runtime=10)
 list_p = list(p)
 len_p = len(list_p)
 train_length = math.ceil(len_p*.8)
-train_p = set(list_p[:train_length])
-test_p = set(list_p[train_length:])
+train_p = random.sample(list_p, train_length)
+test_p = []
+for item in list_p:
+    if item not in train_p:
+        test_p.append(item)
+train_p = set(train_p)
+test_p = set(test_p)
 
 list_n = list(n)
 len_n = len(list_n)
 train_length = math.ceil(len_n*.8)
-train_n = set(list_n[:train_length])
-test_n = set(list_n[train_length:])
+train_n = random.sample(list_n, train_length)
+test_n = []
+for item in list_n:
+    if item not in train_n:
+        test_n.append(item)
+train_n = set(train_n)
+test_n = set(test_n)
 
 model.fit(pos=train_p, neg=train_n)
 hypotheses = model.best_hypotheses(n=3)
 predictions = model.predict(individuals=list(test_p) + list(test_n), hypotheses=hypotheses)
-# print(predictions)
+print(predictions)
 print('end')
