@@ -10,7 +10,7 @@ if __name__ == "__main__":
     test = TurtleParser()
     test.parse_rdf()
     bla = test.get_subjects()
-    sol = {}
+    solution = {}
     data = {}
     for i in bla:
         data_pos = test.get_labels(i, 1)
@@ -25,4 +25,4 @@ if __name__ == "__main__":
         neg_data = (neg_train, neg_val)
         lp_data = (pos_data,neg_data)
         data[i] = lp_data
-        sol.add(sol)
+        solution[i] = sol
