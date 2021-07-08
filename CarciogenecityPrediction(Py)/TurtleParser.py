@@ -1,6 +1,7 @@
 from rdflib import Graph
 
-class TurtleParser():
+
+class TurtleParser:
 
     def __init__(self):
         self.graph = Graph()
@@ -24,6 +25,7 @@ class TurtleParser():
     storing all carcinigenesis bond of given learning problems 
     with positive and negative labels in separate variables
     """
+
     def get_subjects(self):
         return self.subjects
 
@@ -31,7 +33,7 @@ class TurtleParser():
         pos_for_one_lp = set()
         neg_for_one_lp = set()
 
-        if(pos == 1):
+        if pos == 1:
             for p in list(self.predicates):
                 if str(p) == "https://lpbenchgen.org/property/includesResource":
                     for o in self.graph.objects(learning_problem, p):

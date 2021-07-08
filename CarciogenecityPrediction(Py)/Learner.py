@@ -16,7 +16,7 @@ if __name__ == '__main__':
     """
 
 
-class Learner():
+class Learner:
 
 #    def __init__(self):
 

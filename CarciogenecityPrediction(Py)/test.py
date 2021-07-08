@@ -5,7 +5,6 @@ from sklearn.model_selection import train_test_split
 from Learner import Learner
 from TurtleParser import TurtleParser
 
-
 if __name__ == "__main__":
     test = TurtleParser()
     test.parse_rdf()
@@ -23,6 +22,6 @@ if __name__ == "__main__":
         sol = l.get_predictions(set(pos_train), set(neg_train), u, kb)
         pos_data = (pos_train, pos_val)
         neg_data = (neg_train, neg_val)
-        lp_data = (pos_data,neg_data)
+        lp_data = (pos_data, neg_data)
         data[i] = lp_data
         solution[i] = sol
