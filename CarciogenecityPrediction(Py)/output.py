@@ -1,39 +1,39 @@
-import rdflib
+from rdflib import Graph, Namespace, Literal, URIRef
 from rdflib.namespace import RDF
-import algorithm as alg
+import test as alg
 
 
 class ClassificationResult:
     def __init__(self):
-        self.g = rdflib.Graph()
+        self.g = Graph()
         self.nm = self.g.namespace_manager
-        self.ns_carcinogenesis = rdflib.Namespace()
-        self.ns_resource = rdflib.Namespace()
-        self.ns_property = rdflib.Namespace()
+        self.ns_carcinogenesis = Namespace("http://dl-learner.org/carcinogenesis#")
+        self.ns_resource = Namespace("https://lpbenchgen.org/resource/")
+        self.ns_property = Namespace("https://lpbenchgen.org/property/")
         self.pos_predictions = []
         self.neg_predictions = []
     def create_prefixes(self):
         # g = rdflib.Graph()
 
-        carcinogenesis_uri = "http://dl-learner.org/carcinogenesis#"
-        resource_uri = "https://lpbenchgen.org/resource/"
-        property_uri = "https://lpbenchgen.org/property/"
-
-        self.ns_carcinogenesis = rdflib.Namespace(carcinogenesis_uri)
-        self.ns_resource = rdflib.Namespace(resource_uri)
-        self.ns_property = rdflib.Namespace(property_uri)
+        # carcinogenesis_uri = "http://dl-learner.org/carcinogenesis#"
+        # resource_uri = "https://lpbenchgen.org/resource/"
+        # property_uri = "https://lpbenchgen.org/property/"
+        #
+        # self.ns_carcinogenesis = rdflib.Namespace(carcinogenesis_uri)
+        # self.ns_resource = rdflib.Namespace(resource_uri)
+        # self.ns_property = rdflib.Namespace(property_uri)
 
         prefix = "carcinogenesis"
-        self.nm.bind(prefix, ns_carcinogenesis)
+        self.nm.bind(prefix, self.ns_carcinogenesis)
         prefix = "lpres"
-        self.nm.bind(prefix, ns_resource)
+        self.nm.bind(prefix, self.ns_resource)
         prefix = "lpprop"
-        self.nm.bind(prefix, ns_property)
+        self.nm.bind(prefix, self.ns_property)
 
 
     def get_output(self, learning_problem):
 
-        outer_dict = alg.predictions.to_dict()
+        outer_dict = alg.sol.to_dict()
         for i in outer_dict:
             inner_dict = outer_dict[i]
             for j in inner_dict:
@@ -46,7 +46,7 @@ class ClassificationResult:
 
         s1 = self.ns_resource.result_1pos
         p1 = self.ns_property.belongsToLP
-        o1 = "true"
+        o1 = Literal(true)
         self.g.add((s1, p1, o1,))
 
         p2 = self.ns_property.pertainsTo
@@ -64,7 +64,7 @@ class ClassificationResult:
 
         s1 = self.ns_resource.result_1neg
         p1 = self.ns_property.belongsToLP
-        o1 = "false"
+        o1 = Literal(false)
         self.g.add((s1, p1, o1,))
 
         p2 = self.ns_property.pertainsTo
@@ -77,4 +77,4 @@ class ClassificationResult:
             o3 = neg_element
             self.g.add((s1, p3, o3,))
 
-
+        self.g.serialize(destination='output_classification_result.ttl', format='turtle')
