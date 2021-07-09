@@ -4,9 +4,10 @@ from sklearn.model_selection import train_test_split
 
 from Learner import Learner
 from TurtleParser import TurtleParser
-
+from output import ClassificationResult
 if __name__ == "__main__":
     test = TurtleParser()
+    cr = ClassificationResult()
     test.parse_rdf()
     bla = test.get_subjects()
     solution = {}
@@ -25,3 +26,5 @@ if __name__ == "__main__":
         lp_data = (pos_data, neg_data)
         data[i] = lp_data
         solution[i] = sol
+        cr.create_prefixes()
+        cr.get_output(i, sol)

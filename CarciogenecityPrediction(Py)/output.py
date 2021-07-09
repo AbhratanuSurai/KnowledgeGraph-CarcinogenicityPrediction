@@ -1,6 +1,4 @@
 from rdflib import Graph, Namespace, Literal, URIRef
-from rdflib.namespace import RDF
-import test as alg
 
 
 class ClassificationResult:
@@ -12,28 +10,17 @@ class ClassificationResult:
         self.ns_property = Namespace("https://lpbenchgen.org/property/")
         self.pos_predictions = []
         self.neg_predictions = []
+
     def create_prefixes(self):
-        # g = rdflib.Graph()
 
-        # carcinogenesis_uri = "http://dl-learner.org/carcinogenesis#"
-        # resource_uri = "https://lpbenchgen.org/resource/"
-        # property_uri = "https://lpbenchgen.org/property/"
-        #
-        # self.ns_carcinogenesis = rdflib.Namespace(carcinogenesis_uri)
-        # self.ns_resource = rdflib.Namespace(resource_uri)
-        # self.ns_property = rdflib.Namespace(property_uri)
+        self.nm.bind("carcinogenesis", self.ns_carcinogenesis)
+        self.nm.bind("lpres", self.ns_resource)
+        self.nm.bind("lpprop", self.ns_property)
 
-        prefix = "carcinogenesis"
-        self.nm.bind(prefix, self.ns_carcinogenesis)
-        prefix = "lpres"
-        self.nm.bind(prefix, self.ns_resource)
-        prefix = "lpprop"
-        self.nm.bind(prefix, self.ns_property)
+    def get_output(self, learning_problem, solution):
 
-
-    def get_output(self, learning_problem):
-
-        outer_dict = alg.sol.to_dict()
+        # Storing all the positive and negative predictions in separate variables
+        outer_dict = solution.to_dict()
         for i in outer_dict:
             inner_dict = outer_dict[i]
             for j in inner_dict:
@@ -44,37 +31,37 @@ class ClassificationResult:
                     negative = str(j).split(".")
                     self.neg_predictions.append(negative[-1])
 
+        # for positive predictions
         s1 = self.ns_resource.result_1pos
         p1 = self.ns_property.belongsToLP
-        o1 = Literal(true)
-        self.g.add((s1, p1, o1,))
+        o1 = Literal(True)
+        self.g.add((s1, p1, o1))
 
         p2 = self.ns_property.pertainsTo
         lp_name = str(learning_problem).split("/")
-        o2 = self.ns_resource.lp_name[-1]
-        self.g.add((s1, p2, o2,))
+        o2 = lp_name[-1]
+        self.g.add((s1, p2, self.ns_resource[o2]))
 
         for pos_element in self.pos_predictions:
             p3 = self.ns_property.resource
             o3 = pos_element
-            self.g.add((s1, p3, o3,))
+            self.g.add((s1, p3, self.ns_carcinogenesis[o3]))
 
-
-        # for negative resources
+        # for negative predictions
 
         s1 = self.ns_resource.result_1neg
         p1 = self.ns_property.belongsToLP
-        o1 = Literal(false)
-        self.g.add((s1, p1, o1,))
+        o1 = Literal(False)
+        self.g.add((s1, p1, o1))
 
         p2 = self.ns_property.pertainsTo
         lp_name = str(learning_problem).split("/")
-        o2 = self.ns_resource.lp_name[-1]
-        self.g.add((s1, p2, o2,))
+        o2 = lp_name[-1]
+        self.g.add((s1, p2, self.ns_resource[o2]))
 
         for neg_element in self.neg_predictions:
             p3 = self.ns_property.resource
             o3 = neg_element
-            self.g.add((s1, p3, o3,))
+            self.g.add((s1, p3, self.ns_carcinogenesis[o3]))
 
         self.g.serialize(destination='output_classification_result.ttl', format='turtle')
