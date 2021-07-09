@@ -26,5 +26,9 @@ if __name__ == "__main__":
         lp_data = (pos_data, neg_data)
         data[i] = lp_data
         solution[i] = sol
-        cr.create_prefixes()
-        cr.get_output(i, sol)
+
+    cr.create_prefixes()
+    cr.make_output(solution)
+    cr.get_output()
+
+
