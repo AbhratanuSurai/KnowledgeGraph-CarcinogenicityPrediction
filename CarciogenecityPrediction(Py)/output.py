@@ -1,4 +1,4 @@
-from rdflib import Graph, Namespace, Literal, URIRef
+from rdflib import Graph, Namespace, Literal
 
 
 class ClassificationResult:
@@ -8,87 +8,70 @@ class ClassificationResult:
         self.ns_carcinogenesis = Namespace("http://dl-learner.org/carcinogenesis#")
         self.ns_resource = Namespace("https://lpbenchgen.org/resource/")
         self.ns_property = Namespace("https://lpbenchgen.org/property/")
-        self.pos_predictions = []
-        self.neg_predictions = []
-        self.learning_problems = []
+        self.result_number = 1
 
     def create_prefixes(self):
+        """This method is responsible to create the prefixes for the output turtle file."""
 
         self.nm.bind("carcinogenesis", self.ns_carcinogenesis)
         self.nm.bind("lpres", self.ns_resource)
         self.nm.bind("lpprop", self.ns_property)
 
-    def make_output(self, predictions):
+    def make_output(self, predictions, learning_problem):
+        """This method is getting the name of a learning problem and
+        predictions for that learning problem as input parameters. It is then
+        responsible to convert the predictions of all individual learning problems
+        to the mentioned turtle RDF format by adding them in a graph.
+        """
 
-        for lp in predictions.keys():
-            self.learning_problems.append(str(lp))
-            # print(lp)
-            # print('CHECKING', self.learning_problems)
-        i = 0
-        for each_prediction in predictions.values():
-            each_prediction['pred'] = round(each_prediction.mean(1))
+        predictions['pred'] = round(predictions.mean(1))
 
+        # This block is responsible to create and  add the first two triples
+        # for positive predictions of one learning problem in the graph
+        # as per the provided output format.
 
+        lpres_pos = "result_" + str(self.result_number) + "pos"
+        s1_pos = self.ns_resource[lpres_pos]
+        p1_pos = self.ns_property.belongsToLP
+        o1_pos = Literal(True)
+        self.g.add((s1_pos, p1_pos, o1_pos))
 
-            # for pos_element in self.pos_predictions:
-            #     p3 = self.ns_property.resource
-            #     o3 = pos_element
-            #     self.g.add((s1, p3, self.ns_carcinogenesis[o3]))
+        p2_pos = self.ns_property.pertainsTo
+        lp_name = str(learning_problem).split("/")
+        o2_pos = lp_name[-1]
+        self.g.add((s1_pos, p2_pos, self.ns_resource[o2_pos]))
 
+        # This block is responsible to create and  add the first two triples
+        # for negative predictions of one learning problem in the graph
+        # as per the provided output format.
 
+        lpres_neg = "result_" + str(self.result_number) + "neg"
+        s1_neg = self.ns_resource[lpres_neg]
+        p1_neg = self.ns_property.belongsToLP
+        o1_neg = Literal(False)
+        self.g.add((s1_neg, p1_neg, o1_neg))
 
-            # for neg_element in self.neg_predictions:
-            #     p3 = self.ns_property.resource
-            #     o3 = neg_element
-            #     self.g.add((s1, p3, self.ns_carcinogenesis[o3]))
+        p2_neg = self.ns_property.pertainsTo
+        lp_name = str(learning_problem).split("/")
+        o2_neg = lp_name[-1]
+        self.g.add((s1_neg, p2_neg, self.ns_resource[o2_neg]))
 
-            for item in each_prediction.index:
-                pred = each_prediction.loc[item]['pred']
-                comp = str(item).split('.')[-1]
-                if pred > 0.5:
-                    # for positive predictions
-                    s1 = self.ns_resource.result_1pos
-                    p1 = self.ns_property.belongsToLP
-                    o1 = Literal(True)
-                    self.g.add((s1, p1, o1))
+        # Iterating over all the predictions of the carcinogenesis bonds for both
+        # positive and negative predictions and adding them into the graph as triple structure.
 
-                    p2 = self.ns_property.pertainsTo
-                    lp_name = str(self.learning_problems[i]).split("/")
-                    o2 = lp_name[-1]
-                    self.g.add((s1, p2, self.ns_resource[o2]))
-                    self.g.add((self.ns_resource.result_1pos, self.ns_property.resource, self.ns_carcinogenesis[comp]))
-                else:
-                    # for negative predictions
+        for item in predictions.index:
+            pred = predictions.loc[item]['pred']
+            comp = str(item).split('.')[-1]
+            if pred > 0.5:
+                self.g.add((s1_pos, self.ns_property.resource, self.ns_carcinogenesis[comp]))
+            else:
+                self.g.add((s1_neg, self.ns_property.resource, self.ns_carcinogenesis[comp]))
 
-                    s1 = self.ns_resource.result_1neg
-                    p1 = self.ns_property.belongsToLP
-                    o1 = Literal(False)
-                    self.g.add((s1, p1, o1))
-
-                    p2 = self.ns_property.pertainsTo
-                    lp_name = str(self.learning_problems[i]).split("/")
-                    o2 = lp_name[-1]
-                    self.g.add((s1, p2, self.ns_resource[o2]))
-                    self.g.add((self.ns_resource.result_1neg, self.ns_property.resource, self.ns_carcinogenesis[comp]))
-
-            i = i + 1
-        # Storing all the positive and negative predictions in separate variables
-        # outer_dict = solution.to_dict()
-        # for i in outer_dict:
-        #     inner_dict = outer_dict[i]
-        #     for j in inner_dict:
-        #         if inner_dict[j] == 1.0:
-        #             positive = str(j).split(".")
-        #             self.pos_predictions.append(positive[-1])
-        #         elif inner_dict[j] == 0.0:
-        #             negative = str(j).split(".")
-        #             self.neg_predictions.append(negative[-1])
-
-        # predictions['pred'] = round(predictions.mean(1))
-
-        # self.g.serialize(destination='output_classification_result.ttl', format='turtle')
+        self.result_number = self.result_number + 1
 
     def get_output(self):
+        """"This method is providing the output graph
+        which consists of the prediction of all the learning problems
+        as the required turtle RDF file.
+        """
         self.g.serialize(destination='output_classification_result.ttl', format='turtle', encoding="utf-8")
-        # print(self.g.serialize(format='n3'))
-
