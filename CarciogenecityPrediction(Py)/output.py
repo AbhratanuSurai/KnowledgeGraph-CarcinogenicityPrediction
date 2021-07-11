@@ -69,9 +69,9 @@ class ClassificationResult:
 
         self.result_number = self.result_number + 1
 
-    def get_output(self):
+    def get_output(self,i="0"):
         """"This method is providing the output graph
         which consists of the prediction of all the learning problems
         as the required turtle RDF file.
         """
-        self.g.serialize(destination='output_classification_result.ttl', format='turtle', encoding="utf-8")
+        self.g.serialize(destination='output_classification_result'+i+'.ttl', format='turtle', encoding="utf-8")
