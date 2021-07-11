@@ -8,19 +8,6 @@ class TurtleParser:
         self.subjects = set()
         self.predicates = set()
 
-    def parse_rdf(self):
-
-        self.graph.parse("kg-mini-project-train_v2.ttl", format="ttl")
-
-        """
-        Storing distinct subjects and distinct predicates
-        in the sets subjects and predicates
-        """
-        for s in self.graph.subjects():
-            self.subjects.add(s)
-        for p in self.graph.predicates():
-            self.predicates.add(p)
-
     def parse_rdf(self, path="kg-mini-project-train_v2.ttl"):
 
         self.graph.parse(path, format="ttl")
