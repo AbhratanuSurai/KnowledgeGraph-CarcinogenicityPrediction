@@ -1,12 +1,20 @@
 from ontolearn import KnowledgeBase
 from ontolearn.concept_learner import CELOE
-from sklearn.model_selection import train_test_split
 
-from Learner import Learner
 from TurtleParser import TurtleParser
+
 from output import ClassificationResult
-from eval import Evaluator
+
 from missing import missing_individuals
+
+def get_predictions(pos, neg, unk, kb):
+    # returns 3 classifications of the unknown individuals for one particular learning problem,
+    # based on the positive and negative examples
+    model = CELOE(knowledge_base=kb, max_runtime=50)
+    model.fit(pos=pos, neg=neg)
+    model.save_best_hypothesis(n=3)
+    hypotheses = model.best_hypotheses(n=3)
+    return model.predict(individuals=list(unk), hypotheses=hypotheses)
 
 def evaluate(solution, pos, neg):
     # Will calculate the F1-score, based on the the learned classification
@@ -29,38 +37,28 @@ def evaluate(solution, pos, neg):
             else:
                 fn += 1
     accuracy = (tp + tn) / len(pos + neg)
-    print("accuracy:", accuracy)
+    # print("accuracy:", accuracy)
     recall = tp / (tp + fn)
     precision = tp / (tp + fp)
     f1 = 2 / ((1 / precision) + (1 / recall))
-    print("recall:", recall)
-    print("precision:", precision)
-    print("F1-Score:", f1)
-
+    # print("recall:", recall)
+    # print("precision:", precision)
+    # print("F1-score:", f1)
+    return f1
 
 if __name__ == "__main__":
-    test = TurtleParser()
+    p = TurtleParser()
     cr = ClassificationResult()
-    test.parse_rdf("kg-mini-project-train_v2.ttl")
-    bla = test.get_subjects()
-    solution = {}
-    data = {}
-    sol_list = []
-    for i in bla:
-        data_pos = test.get_labels(i, 1)
-        data_neg = test.get_labels(i, 0)
-        pos_train, pos_val = train_test_split(list(data_pos), test_size=0.2)
-        neg_train, neg_val = train_test_split(list(data_neg), test_size=0.2)
-        u = pos_val + neg_val
-        l = Learner()
+    # talking point: war vorher in der Schleife, muss aber meiner Meinung nach nur einmal ausgeführt werden?
+    cr.create_prefixes()
+    p.parse_rdf("kg-mini-project-grading.ttl")
+    sub = p.get_subjects()
+    unknown = missing_individuals()
+    for i in sub:
+        data_pos = p.get_labels(i, 1)
+        data_neg = p.get_labels(i, 0)
+        u = unknown.get_unknown_individuals(set(p.get_labels(i, 2)))
         kb = KnowledgeBase(path='carcinogenesis.owl')
-        sol = l.get_predictions(set(pos_train), set(neg_train), u, kb)
-        pos_data = (pos_train, pos_val)
-        neg_data = (neg_train, neg_val)
-        lp_data = (pos_data, neg_data)
-        data[i] = lp_data
-        solution[i] = sol
-        cr.create_prefixes()
+        sol = get_predictions(set(data_pos), set(data_neg), set(u), kb)
         cr.make_output(sol, i)
-
-    cr.get_output("6")
+    cr.get_output("5")

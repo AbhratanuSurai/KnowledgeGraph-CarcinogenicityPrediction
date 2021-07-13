@@ -69,7 +69,7 @@ class ClassificationResult:
 
         self.result_number = self.result_number + 1
 
-    def get_output(self,i="0"):
+    def get_output(self,i=""):
         """"This method is providing the output graph
         which consists of the prediction of all the learning problems
         as the required turtle RDF file.
