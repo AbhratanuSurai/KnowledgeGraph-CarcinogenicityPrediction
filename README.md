@@ -29,7 +29,7 @@ Carcinogenicity prediction for unknown individuals.
 ## Design decisions:
 
 -	Rdflib is used to parse the “kg-mini-project-train_v2.ttl” file to get the data from the turtle file to divide features and labels of the provided training and validation datasets into their respective variables in the TurtleParser.py module. The name of the carcinogenesis bonds along with the labels and learning problem names are fetched from the file.
--	CELOE model from ontolearn is used for training to learn concepts using the above-mentioned parsed data and the given knowledge base. Once the training is done the prediction is provided on the validation data by the learner.py module using the trained model.
+-	CELOE model from ontolearn is used for training to learn concepts using the above-mentioned parsed data and the given knowledge base. Once the training is done the prediction is provided on the validation data by the get_predictions() method in main.py module using the trained model.
 -	rdflib is again used to convert the predicted output to one RDF file in turtle format in output.py module.
 - evaluate() funtion in	main.py module is used to evaluate the precision and recall of our predicted output provided by the CELOE model after training.
 - main.py is responsible for identifying the unknown individuals from the “kg-mini-project-grading.ttl” file and providing predictions for them.
