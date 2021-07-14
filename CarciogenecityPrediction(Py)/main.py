@@ -61,4 +61,4 @@ if __name__ == "__main__":
         sol = get_predictions(set(data_pos), set(data_neg), set(u), kb)
         print(sol)
         cr.make_output(sol, i)
-    cr.get_output("1")
+    cr.get_output("_final")
