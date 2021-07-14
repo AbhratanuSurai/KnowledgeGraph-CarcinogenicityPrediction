@@ -3,6 +3,8 @@ class Evaluator:
     def evaluate(self, solution, pos, neg):
         # Will calculate the F1-score, based on the the learned classification
         # and the actual positive and negative Classification.
+        # Sometimes in line 14/19 the evaluator bugs.
+        # It seems like row[solut ... gives out a series in case, instead of a single value, when it bugs.
         tp = 0
         fp = 0
         fn = 0
