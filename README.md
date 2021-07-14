@@ -13,7 +13,7 @@ Kindly refer to the [README.md](https://github.com/dice-group/Ontolearn#readme) 
 *Note:* Please do not use "pip install ontolearn" command to install ontolearn package. Follow the steps to install the package from the github source.
 
 ## Usage:
-```python test.py```  
+```python main.py```  
 generates “output_classification_result<*number*>.ttl” as output. 
 
 
