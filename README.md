@@ -14,7 +14,7 @@ Kindly refer to the [README.md](https://github.com/dice-group/Ontolearn#readme) 
 
 ## Usage:
 ```python main.py```  
-generates “output_classification_result<*number*>.ttl” as output. 
+generates “output_classification_result<*String*>.ttl” as output. 
 
 
 # Interfaces and Scope
