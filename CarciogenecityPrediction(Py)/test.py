@@ -2,11 +2,21 @@ from ontolearn import KnowledgeBase
 from ontolearn.concept_learner import CELOE
 from sklearn.model_selection import train_test_split
 
-from Learner import Learner
 from TurtleParser import TurtleParser
 from output import ClassificationResult
-from eval import Evaluator
-from missing import missing_individuals
+
+"""
+Here we tested our work. Is not cleaned up, but still in the repository for transparency.
+"""
+
+def get_predictions(pos, neg, unk, kb):
+    # returns 3 classifications of the unknown individuals for one particular learning problem,
+    # based on the positive and negative examples
+    model = CELOE(knowledge_base=kb, max_runtime=50)
+    model.fit(pos=pos, neg=neg)
+    model.save_best_hypothesis(n=3)
+    hypotheses = model.best_hypotheses(n=3)
+    return model.predict(individuals=list(unk), hypotheses=hypotheses)
 
 def evaluate(solution, pos, neg):
     # Will calculate the F1-score, based on the the learned classification
@@ -42,19 +52,18 @@ if __name__ == "__main__":
     test = TurtleParser()
     cr = ClassificationResult()
     test.parse_rdf("kg-mini-project-train_v2.ttl")
-    bla = test.get_subjects()
+    sub = test.get_subjects()
     solution = {}
     data = {}
     sol_list = []
-    for i in bla:
+    for i in sub:
         data_pos = test.get_labels(i, 1)
         data_neg = test.get_labels(i, 0)
         pos_train, pos_val = train_test_split(list(data_pos), test_size=0.2)
         neg_train, neg_val = train_test_split(list(data_neg), test_size=0.2)
         u = pos_val + neg_val
-        l = Learner()
         kb = KnowledgeBase(path='carcinogenesis.owl')
-        sol = l.get_predictions(set(pos_train), set(neg_train), u, kb)
+        sol = get_predictions(set(pos_train), set(neg_train), u, kb)
         pos_data = (pos_train, pos_val)
         neg_data = (neg_train, neg_val)
         lp_data = (pos_data, neg_data)
@@ -63,4 +72,4 @@ if __name__ == "__main__":
         cr.create_prefixes()
         cr.make_output(sol, i)
 
-    cr.get_output("6")
+    cr.get_output("RERUN")

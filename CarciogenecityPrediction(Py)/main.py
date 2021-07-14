@@ -12,8 +12,8 @@ def get_predictions(pos, neg, unk, kb):
     # based on the positive and negative examples
     model = CELOE(knowledge_base=kb, max_runtime=50)
     model.fit(pos=pos, neg=neg)
-    model.save_best_hypothesis(n=3)
-    hypotheses = model.best_hypotheses(n=3)
+    model.save_best_hypothesis(n=1)
+    hypotheses = model.best_hypotheses(n=1)
     return model.predict(individuals=list(unk), hypotheses=hypotheses)
 
 def evaluate(solution, pos, neg):
@@ -49,7 +49,6 @@ def evaluate(solution, pos, neg):
 if __name__ == "__main__":
     p = TurtleParser()
     cr = ClassificationResult()
-    # talking point: war vorher in der Schleife, muss aber meiner Meinung nach nur einmal ausgeführt werden?
     cr.create_prefixes()
     p.parse_rdf("kg-mini-project-grading.ttl")
     sub = p.get_subjects()
@@ -60,5 +59,6 @@ if __name__ == "__main__":
         u = unknown.get_unknown_individuals(set(p.get_labels(i, 2)))
         kb = KnowledgeBase(path='carcinogenesis.owl')
         sol = get_predictions(set(data_pos), set(data_neg), set(u), kb)
+        print(sol)
         cr.make_output(sol, i)
-    cr.get_output("5")
+    cr.get_output("1")
