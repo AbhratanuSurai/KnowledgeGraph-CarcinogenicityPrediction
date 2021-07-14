@@ -2,18 +2,19 @@
 Predict the carcinogenicity of cells by the given carciogenesis.owl data and the provided learning problems for algorithm development
 # Usage and Installation 
 ## Prerequisite: 
-Python 3.7.1
-Libraries: rdflib, ontolearn.
+Python 3.7.1<br/>
+**Libraries:** rdflib, ontolearn.
 ## Installation: 
-**rdflib installation:**
-pip install rdflib 
+**rdflib installation:**<br/>
+```pip install rdflib``` 
 
-**ontolearn installation:**
-Please refer to the [README.md](https://github.com/dice-group/Ontolearn#readme) file of [this git repository](https://github.com/dice-group/Ontolearn) for the installation of Ontolearn. 
+**ontolearn installation:**<br/>
+Kindly refer to the [README.md](https://github.com/dice-group/Ontolearn#readme) file of [this git repository](https://github.com/dice-group/Ontolearn) for the installation of Ontolearn. <br/>
+*Note:* Please do not use "pip install ontolearn" command to install ontolearn package. Follow the steps to install the package from the github source.
 
 ## Usage:
-python test.py 
-generates “output_classification_result*<number>*.ttl” as output. 
+```python test.py```  
+generates “output_classification_result<*number*>.ttl” as output. 
 
 
 # Interfaces and Scope
@@ -30,5 +31,5 @@ Carcinogenicity prediction for unknown individuals.
 -	Rdflib is used to parse the “kg-mini-project-train_v2.ttl” file to get the data from the turtle file to divide features and labels of the provided training and validation datasets into their respective variables in the TurtleParser.py module. The name of the carcinogenesis bonds along with the labels and learning problem names are fetched from the file.
 -	CELOE model from ontolearn is used for training to learn concepts using the above-mentioned parsed data and the given knowledge base. Once the training is done the prediction is provided on the validation data by the learner.py module using the trained model.
 -	rdflib is again used to convert the predicted output to one RDF file in turtle format in output.py module.
--	eval.py module is used to evaluate the precision and recall of our predicted output provided by the CELOE model after training.
-- missing.py is used to identify the unknown individuals from the “kg-mini-project-grading.ttl” file.
+- evaluate() funtion in	main.py module is used to evaluate the precision and recall of our predicted output provided by the CELOE model after training.
+- main.py is responsible for identifying the unknown individuals from the “kg-mini-project-grading.ttl” file and providing predictions for them.
